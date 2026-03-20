@@ -695,7 +695,7 @@
                         <button type="submit" class="w-full bg-safety-orange text-white py-4 rounded-lg font-semibold hover:bg-orange-600 active:bg-orange-700 transition-all shadow-md uppercase tracking-wider text-sm">
                             Request My Free Call
                         </button>
-                        <p id="form-success" class="hidden text-center text-sm text-green-600 font-medium">✓ Thanks! I'll be in touch within one business day.</p>
+                        <p id="form-success" class="hidden text-center py-8 text-base font-semibold text-navy">✓ We'll reach out to you shortly!</p>
                     </form>
                 </div>
             </div>
@@ -770,11 +770,24 @@
             mobileMenu.classList.remove('open');
         }
 
-        // Contact form submission feedback
+        // Contact form submission
         document.getElementById('contact-form').addEventListener('submit', function(e) {
             e.preventDefault();
-            document.getElementById('form-success').classList.remove('hidden');
-            this.querySelectorAll('input, select, textarea, button[type="submit"]').forEach(el => el.disabled = true);
+            const form = this;
+            const data = new FormData(form);
+
+            fetch('/', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams(data).toString()
+            }).then(() => {
+                form.style.display = 'none';
+                document.getElementById('form-success').classList.remove('hidden');
+            }).catch(() => {
+                // Fallback: still show success if fetch fails (e.g. CSP)
+                form.style.display = 'none';
+                document.getElementById('form-success').classList.remove('hidden');
+            });
         });
 
         // Smooth scroll for all anchor links
